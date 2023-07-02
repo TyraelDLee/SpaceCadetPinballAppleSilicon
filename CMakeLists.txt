@@ -3,6 +3,8 @@ project(SpaceCadetPinball)
 
 set(CMAKE_CXX_STANDARD 11)
 
+set(CMAKE_OSX_ARCHITECTURES "arm64"
+    CACHE STRING "The list of target architectures to build")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 
@@ -38,8 +40,6 @@ set(SOURCE_FILES
         SpaceCadetPinball/control.h
         SpaceCadetPinball/EmbeddedData.cpp
         SpaceCadetPinball/EmbeddedData.h
-        SpaceCadetPinball/font_selection.cpp
-        SpaceCadetPinball/font_selection.h
         SpaceCadetPinball/fullscrn.cpp
         SpaceCadetPinball/fullscrn.h
         SpaceCadetPinball/gdrv.cpp
@@ -63,6 +63,8 @@ set(SOURCE_FILES
         SpaceCadetPinball/pb.cpp
         SpaceCadetPinball/pb.h
         SpaceCadetPinball/pch.h
+        SpaceCadetPinball/pinball.cpp
+        SpaceCadetPinball/pinball.h
         SpaceCadetPinball/proj.cpp
         SpaceCadetPinball/proj.h
         SpaceCadetPinball/render.cpp
@@ -131,8 +133,6 @@ set(SOURCE_FILES
         SpaceCadetPinball/TPopupTarget.h
         SpaceCadetPinball/TRamp.cpp
         SpaceCadetPinball/TRamp.h
-        SpaceCadetPinball/translations.cpp
-        SpaceCadetPinball/translations.h
         SpaceCadetPinball/TRollover.cpp
         SpaceCadetPinball/TRollover.h
         SpaceCadetPinball/TSink.cpp
@@ -169,13 +169,9 @@ set(SOURCE_FILES
         SpaceCadetPinball/imgui_demo.cpp
         SpaceCadetPinball/imgui_impl_sdl.cpp
         SpaceCadetPinball/imgui_impl_sdl.h
-        SpaceCadetPinball/imgui_impl_sdlrenderer.h
-        SpaceCadetPinball/imgui_impl_sdlrenderer.cpp
         SpaceCadetPinball/imstb_textedit.h
         SpaceCadetPinball/imstb_rectpack.h
         SpaceCadetPinball/imstb_truetype.h
-        SpaceCadetPinball/DebugOverlay.cpp
-        SpaceCadetPinball/DebugOverlay.h
         )
 
 # On Windows, include resource file with the icon
@@ -184,7 +180,23 @@ if(WIN32)
     list(APPEND SOURCE_FILES SpaceCadetPinball/SpaceCadetPinball.rc)
 endif(WIN32)
 
-add_executable(SpaceCadetPinball ${SOURCE_FILES})
+# add macOS app output
+# put the MacOSXBundleInfo.plist.in file in src folder.
+# find the MacOSXBundleInfo.plist.in template at cmake_install_dir/share/cmake/Modules/MacOSXBundleInfo.plist.in
+add_executable(
+    SpaceCadetPinball
+    MACOSX_BUNDLE
+    ${SOURCE_FILES})
+
+set_target_properties(
+    SpaceCadetPinball PROPERTIES
+    BUNDLE True
+    MACOSX_BUNDLE_GUI_IDENTIFIER my.domain.style.identifier.SpaceCadetPinball
+    MACOSX_BUNDLE_BUNDLE_NAME SpaceCadetPinball
+    MACOSX_BUNDLE_BUNDLE_VERSION "1.0"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+    MACOSX_BUNDLE_INFO_PLIST MacOSXBundleInfo.plist.in
+)
 
 # Skip pch on foreign code
 set_source_files_properties(
@@ -195,7 +207,6 @@ set_source_files_properties(
         SpaceCadetPinball/imgui_tables.cpp
         SpaceCadetPinball/imgui_demo.cpp
         SpaceCadetPinball/imgui_impl_sdl.cpp
-        SpaceCadetPinball/imgui_impl_sdlrenderer.cpp
         PROPERTIES SKIP_PRECOMPILE_HEADERS 1
 )
 
@@ -218,7 +229,7 @@ if(WIN32)
         string(REGEX REPLACE "lib$" "bin" SDL2_DLL_PATH ${SDL2_DLL_PATH})
         string(REGEX REPLACE "lib$" "bin" SDL2_MIXER_DLL_PATH ${SDL2_MIXER_DLL_PATH})
     endif()
-    message(STATUS "copy paths='${SDL2_DLL_PATH}' '${SDL2_MIXER_DLL_PATH}'") 
+    message(STATUS "copy paths='${SDL2_DLL_PATH}' '${SDL2_MIXER_DLL_PATH}'")
     add_custom_command(TARGET SpaceCadetPinball POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SDL2_DLL_PATH}/SDL2.dll" $<TARGET_FILE_DIR:SpaceCadetPinball>
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SDL2_MIXER_DLL_PATH}/SDL2_mixer.dll" $<TARGET_FILE_DIR:SpaceCadetPinball>
@@ -228,10 +239,10 @@ endif()
 if(UNIX AND NOT APPLE)
 	include(GNUInstallDirs)
 	install(TARGETS "${PROJECT_NAME}" RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-	install(FILES "${CMAKE_SOURCE_DIR}/Platform/Linux/${PROJECT_NAME}.desktop" DESTINATION "share/applications")
-	install(FILES "${CMAKE_SOURCE_DIR}/Platform/Linux/${PROJECT_NAME}.metainfo.xml" DESTINATION "share/metainfo")
+	install(FILES "/Platform/Linux/${PROJECT_NAME}.desktop" DESTINATION "share/applications")
+	install(FILES "/Platform/Linux/${PROJECT_NAME}.metainfo.xml" DESTINATION "share/metainfo")
 	foreach(S 16 32 48 128 192)
-		install(FILES "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/Icon_${S}x${S}.png" DESTINATION
+		install(FILES "${PROJECT_NAME}/Icon_${S}x${S}.png" DESTINATION
 			"share/icons/hicolor/${S}x${S}/apps" RENAME "${PROJECT_NAME}.png")
 	endforeach(S)
 endif()
