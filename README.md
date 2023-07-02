@@ -79,7 +79,7 @@ This project is available as Flatpak on [Flathub](https://flathub.org/apps/detai
 
 Compile with CMake. Ensure that `CMAKE_OSX_ARCHITECTURES` variable is set for either `x86_64` Apple Intel or `arm64` for Apple Silicon.
 
-Tested with: macOS Big Sur (Intel) with Xcode 13 & macOS Montery Beta (Apple Silicon) with Xcode 13.
+Tested with: macOS Ventura (Apple Silicon) with Xcode 13.
 
 ## Plans
 
