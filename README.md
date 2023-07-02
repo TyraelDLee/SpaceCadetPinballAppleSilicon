@@ -54,24 +54,6 @@ Platforms covered by this project: desktop Windows, Linux and macOS.
 
 Project uses `C++11` and depends on `SDL2` libs.
 
-### On Windows
-
-Download and unpack devel packages for `SDL2` and `SDL2_mixer`.\
-Set paths to them in `CMakeLists.txt`, see suggested placement in `/Libs`.\
-Compile with Visual Studio; tested with 2019.
-
-### On Linux
-
-Install devel packages for `SDL2` and `SDL2_mixer`.\
-Compile with CMake; tested with GCC 10, Clang 11.\
-To cross-compile for Windows, install a 64-bit version of mingw and its `SDL2` and `SDL2_mixer` distributions, then use the `mingwcc.cmake` toolchain.
-
-[![Packaging status](https://repology.org/badge/tiny-repos/spacecadetpinball.svg)](https://repology.org/project/spacecadetpinball/versions) 
-
-Some distributions provide a package in their repository. You can use those for easier dependency management and updates.
-
-This project is available as Flatpak on [Flathub](https://flathub.org/apps/details/com.github.k4zmu2a.spacecadetpinball).
-
 ### On macOS
 
 * **Homebrew**: Install the `SDL2`, `SDL2_mixer` homebrew packages.
